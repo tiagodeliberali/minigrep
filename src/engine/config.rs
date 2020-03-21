@@ -1,0 +1,27 @@
+use std::env;
+
+pub struct Config {
+    pub query: String,
+    pub filename: String,
+    pub case_sensitive: bool,
+}
+
+impl Config {
+    pub fn new(args: &[String]) -> Result<Config, &'static str> {
+        let query = args[1].clone();
+        let filename = args[2].clone();
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+
+        Ok(Config { query, filename, case_sensitive })
+    }
+
+    pub fn build_from_args() -> Result<Config, &'static str> {
+        let args: Vec<String> = env::args().collect();
+
+        if args.len() < 3 {
+            return Err("Você precisa fornecer 2 argumentos  ")
+        }
+
+        Config::new(&args)
+    }
+}
