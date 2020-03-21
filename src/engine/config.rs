@@ -7,21 +7,25 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        let query = args[1].clone();
-        let filename = args[2].clone();
+    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        args.next();
+
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Você precisa passar o termo como primeiro parâmetro")
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Você precisa passar o nome do arquivo como segundo parâmetro")
+        };
+
         let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 
         Ok(Config { query, filename, case_sensitive })
     }
 
     pub fn build_from_args() -> Result<Config, &'static str> {
-        let args: Vec<String> = env::args().collect();
-
-        if args.len() < 3 {
-            return Err("Você precisa fornecer 2 argumentos  ")
-        }
-
-        Config::new(&args)
+        Config::new(env::args())
     }
 }
