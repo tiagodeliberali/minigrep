@@ -2,7 +2,7 @@
 
 Exercise of [Chapter 12](https://doc.rust-lang.org/book/ch12-00-an-io-project.html) from the book The Rust Programming Language
 
-Added clap, STDIN and Regex from chapter 2 of the book [Rust in Action](https://livebook.manning.com/book/rust-in-action/chapter-2/)
+Added clap, STDIN and Regex from [Chapter 2](https://livebook.manning.com/book/rust-in-action/chapter-2/) of the book Rust in Action
 
 ## Using minigrep
 
