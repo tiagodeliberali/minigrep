@@ -8,7 +8,7 @@ Added clap, STDIN and Regex from [Chapter 2](https://livebook.manning.com/book/r
 
 If you just run `minigrep`, you can get some help from `clap`:
 
-<pre><font color="#F92672"><b>➜  </b></font><font color="#A1EFE4"><b>test</b></font> minigrep
+<pre><font color="#A6E22E"><b>➜  </b></font><font color="#A1EFE4"><b>minigrep</b></font> <font color="#66D9EF"><b>git:(</b></font><font color="#F92672"><b>master</b></font><font color="#66D9EF"><b>)</b></font> minigrep
 <font color="#F92672"><b>error:</b></font> The following required arguments were not provided:
     <font color="#F92672"><b>&lt;pattern&gt;</b></font>
 
