@@ -1,5 +1,5 @@
-use std::fs;
 use std::error::Error;
+use std::fs;
 
 pub mod config;
 
@@ -13,7 +13,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     } else {
         search_case_insensitive(&config.query, &contents)
     };
-    
+
     for line in filtered_contests {
         println!("{}", line);
     }
@@ -21,7 +21,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, content: &'a str) ->Vec<&'a str> {
+pub fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
     for line in content.lines() {
         if line.contains(query) {
@@ -31,7 +31,7 @@ pub fn search<'a>(query: &str, content: &'a str) ->Vec<&'a str> {
     results
 }
 
-pub fn search_case_insensitive<'a>(query: &str, content: &'a str) ->Vec<&'a str> {
+pub fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
     let mut results = Vec::new();
     let query_lowercase = query.to_lowercase();
 
@@ -72,8 +72,10 @@ A tesoura ganha do papel
         ";
 
         assert_eq!(
-            vec!["Pedra, papel e tesoura", 
-                "O papel ganha da pedra, mas perde da tesoura"],
+            vec![
+                "Pedra, papel e tesoura",
+                "O papel ganha da pedra, mas perde da tesoura"
+            ],
             search_case_insensitive(query, contents)
         );
     }

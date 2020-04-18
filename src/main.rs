@@ -1,5 +1,5 @@
-use std::process;
 use minigrep::Config;
+use std::process;
 
 fn main() {
     let config = Config::build_from_args().unwrap_or_else(|err| {
