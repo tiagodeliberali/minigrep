@@ -1,3 +1,6 @@
+extern crate regex;
+
+use regex::Regex;
 use std::error::Error;
 use std::fs;
 
@@ -8,13 +11,9 @@ use config::Config;
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(&config.filename)?;
 
-    let filtered_contests = if config.case_sensitive {
-        search(&config.query, &contents)
-    } else {
-        search_case_insensitive(&config.query, &contents)
-    };
+    let filtered_contents = search(&config.query, &contents);
 
-    for line in filtered_contests {
+    for line in filtered_contents {
         println!("{}", line);
     }
 
@@ -22,21 +21,10 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+    let regex_expression = Regex::new(&query).unwrap();
     let mut results = Vec::new();
     for line in content.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-    results
-}
-
-pub fn search_case_insensitive<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-    let query_lowercase = query.to_lowercase();
-
-    for line in content.lines() {
-        if line.to_lowercase().contains(&query_lowercase) {
+        if let Some(_) = regex_expression.find(&line) {
             results.push(line);
         }
     }
@@ -58,13 +46,13 @@ A tesoura ganha do papel
 
         assert_eq!(
             vec!["O papel ganha da pedra, mas perde da tesoura"],
-            search(query, contents)
+            search(&query, contents)
         );
     }
 
     #[test]
     fn find_case_insensitive() {
-        let query = "pEDrA";
+        let query = "(?i)pEDrA";
         let contents = "\
 Pedra, papel e tesoura
 O papel ganha da pedra, mas perde da tesoura
@@ -76,7 +64,7 @@ A tesoura ganha do papel
                 "Pedra, papel e tesoura",
                 "O papel ganha da pedra, mas perde da tesoura"
             ],
-            search_case_insensitive(query, contents)
+            search(&query, contents)
         );
     }
 }

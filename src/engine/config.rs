@@ -1,12 +1,10 @@
 extern crate clap;
 
 use clap::{App, Arg};
-use std::env;
 
 pub struct Config {
     pub query: String,
     pub filename: String,
-    pub case_sensitive: bool,
 }
 
 impl Config {
@@ -16,7 +14,7 @@ impl Config {
             .about("Busca por padrões em arquivos no ou STDIN")
             .arg(
                 Arg::with_name("pattern")
-                    .help("O padrão a ser buscado. Pode user regex.")
+                    .help("O padrão a ser buscado. Pode user regex. Exemplo de busca case insensitive: '(?i)pEDrA'.")
                     .takes_value(true)
                     .required(true),
             )
@@ -30,12 +28,7 @@ impl Config {
 
         let query = args.value_of("pattern").unwrap().to_string();
         let filename = args.value_of("input").unwrap().to_string();
-        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 
-        Ok(Config {
-            query,
-            filename,
-            case_sensitive,
-        })
+        Ok(Config { query, filename })
     }
 }
