@@ -2,16 +2,25 @@ extern crate regex;
 
 use regex::Regex;
 use std::error::Error;
-use std::fs;
+use std::fs::File;
+use std::io;
+use std::io::prelude::*;
+use std::io::BufReader;
 
 pub mod config;
 
 use config::Config;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let contents = fs::read_to_string(&config.filename)?;
-
-    let filtered_contents = search(&config.query, &contents);
+    let filtered_contents = if &config.filename == "-" {
+        let stdin = io::stdin();
+        let reader = stdin.lock();
+        search(reader, &config.query)
+    } else {
+        let f = File::open(config.filename).unwrap();
+        let reader = BufReader::new(f);
+        search(reader, &config.query)
+    };
 
     for line in filtered_contents {
         println!("{}", line);
@@ -20,11 +29,12 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
+pub fn search<T: BufRead + Sized>(reader: T, query: &str) -> Vec<String> {
     let regex_expression = Regex::new(&query).unwrap();
     let mut results = Vec::new();
-    for line in content.lines() {
-        if let Some(_) = regex_expression.find(&line) {
+    for line in reader.lines() {
+        let line = line.unwrap();
+        if regex_expression.find(&line).is_some() {
             results.push(line);
         }
     }
@@ -42,11 +52,12 @@ mod tests {
 Pedra, papel e tesoura
 O papel ganha da pedra, mas perde da tesoura
 A tesoura ganha do papel
-        ";
+        "
+        .as_bytes();
 
         assert_eq!(
             vec!["O papel ganha da pedra, mas perde da tesoura"],
-            search(&query, contents)
+            search(contents, &query)
         );
     }
 
@@ -57,14 +68,15 @@ A tesoura ganha do papel
 Pedra, papel e tesoura
 O papel ganha da pedra, mas perde da tesoura
 A tesoura ganha do papel
-        ";
+        "
+        .as_bytes();
 
         assert_eq!(
             vec![
                 "Pedra, papel e tesoura",
                 "O papel ganha da pedra, mas perde da tesoura"
             ],
-            search(&query, contents)
+            search(contents, &query)
         );
     }
 }

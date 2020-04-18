@@ -22,12 +22,12 @@ impl Config {
                 Arg::with_name("input")
                     .help("O arquivo usado como referência")
                     .takes_value(true)
-                    .required(true),
+                    .required(false),
             )
             .get_matches();
 
         let query = args.value_of("pattern").unwrap().to_string();
-        let filename = args.value_of("input").unwrap().to_string();
+        let filename = args.value_of("input").unwrap_or("-").to_string();
 
         Ok(Config { query, filename })
     }
